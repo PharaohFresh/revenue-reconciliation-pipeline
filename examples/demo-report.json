@@ -1,0 +1,184 @@
+{
+  "data_origin": "synthetic",
+  "final_ledger": {
+    "active": {
+      "completed_operations": [
+        "e58fca498b4cdf4b89e2dd04d96619c2b1375f18a8823246794363c31dbef9bf"
+      ],
+      "plan_sha256": "8d81cdee7f53202a483497289d70d55aed9173b9f93faab55b57c71591210fdb",
+      "status": "complete"
+    },
+    "deliveries": {
+      "booking-alpha": {
+        "booking_id": "booking-alpha",
+        "click_id": null,
+        "click_source": null,
+        "conversion_time": "2026-09-01T14:15:00+00:00",
+        "customer_id": "customer-one",
+        "matched": null,
+        "reported_attribution": null,
+        "request_status": "accepted",
+        "value_cents": 69500
+      },
+      "booking-beta": {
+        "booking_id": "booking-beta",
+        "click_id": null,
+        "click_source": null,
+        "conversion_time": "2026-09-02T23:40:00+00:00",
+        "customer_id": "customer-two",
+        "matched": null,
+        "reported_attribution": null,
+        "request_status": "accepted",
+        "value_cents": 65000
+      },
+      "booking-delta": {
+        "booking_id": "booking-delta",
+        "click_id": null,
+        "click_source": null,
+        "conversion_time": "2026-09-27T04:55:00+00:00",
+        "customer_id": "customer-one",
+        "matched": null,
+        "reported_attribution": null,
+        "request_status": "accepted",
+        "value_cents": 18000
+      }
+    },
+    "events": {
+      "payment-a1": {
+        "booking_id": "booking-alpha",
+        "customer_id": "customer-one",
+        "kind": "retainer",
+        "occurred_at": "2026-09-01T14:15:00+00:00",
+        "payment_id": "payment-a1",
+        "service_amount_cents": 25000
+      },
+      "payment-a2": {
+        "booking_id": "booking-alpha",
+        "customer_id": "customer-one",
+        "kind": "balance",
+        "occurred_at": "2026-09-20T15:10:00+00:00",
+        "payment_id": "payment-a2",
+        "service_amount_cents": 44500
+      },
+      "payment-a3": {
+        "booking_id": "booking-alpha",
+        "customer_id": "customer-one",
+        "kind": "refund",
+        "occurred_at": "2026-09-25T17:00:00+00:00",
+        "payment_id": "payment-a3",
+        "service_amount_cents": 10000
+      },
+      "payment-b1": {
+        "booking_id": "booking-beta",
+        "customer_id": "customer-two",
+        "kind": "retainer",
+        "occurred_at": "2026-09-02T23:40:00+00:00",
+        "payment_id": "payment-b1",
+        "service_amount_cents": 30000
+      },
+      "payment-b2": {
+        "booking_id": "booking-beta",
+        "customer_id": "customer-two",
+        "kind": "balance",
+        "occurred_at": "2026-09-21T21:05:00+00:00",
+        "payment_id": "payment-b2",
+        "service_amount_cents": 35000
+      },
+      "payment-c1": {
+        "booking_id": "booking-gamma",
+        "customer_id": "customer-three",
+        "kind": "retainer",
+        "occurred_at": "2026-09-22T16:30:00+00:00",
+        "payment_id": "payment-c1",
+        "service_amount_cents": 20000
+      },
+      "payment-d1": {
+        "booking_id": "booking-delta",
+        "customer_id": "customer-one",
+        "kind": "retainer",
+        "occurred_at": "2026-09-27T04:55:00+00:00",
+        "payment_id": "payment-d1",
+        "service_amount_cents": 18000
+      }
+    },
+    "last_export_as_of": "2026-09-28T04:59:00+00:00",
+    "version": 1
+  },
+  "runs": [
+    {
+      "accepted_conversion_value_cents": 25000,
+      "booking_count": 2,
+      "completed_operations": 1,
+      "data_origin": "synthetic",
+      "failures": {
+        "d4868d48d35b63afbcf4cdad5ae4b11d29155fbf4432507ac88e3df8d896ea9c": "Synthetic permanent platform rejection."
+      },
+      "holds": {},
+      "matching_proven": false,
+      "payment_event_count": 2,
+      "plan_sha256": "e8849edd5a075a0243c6f05e376ded444b3b3bd333e6b438160c186b93c5def8",
+      "planned_operations": 2,
+      "platform": "durable local fake API; no external request",
+      "reported_attribution_proven": false,
+      "source_net_service_cash_cents": 55000,
+      "source_service_value_cents": 55000,
+      "status": "partial"
+    },
+    {
+      "accepted_conversion_value_cents": 55000,
+      "booking_count": 2,
+      "completed_operations": 2,
+      "data_origin": "synthetic",
+      "failures": {},
+      "holds": {},
+      "matching_proven": false,
+      "payment_event_count": 2,
+      "plan_sha256": "e8849edd5a075a0243c6f05e376ded444b3b3bd333e6b438160c186b93c5def8",
+      "planned_operations": 2,
+      "platform": "durable local fake API; no external request",
+      "reported_attribution_proven": false,
+      "source_net_service_cash_cents": 55000,
+      "source_service_value_cents": 55000,
+      "status": "complete"
+    },
+    {
+      "accepted_conversion_value_cents": 134500,
+      "booking_count": 3,
+      "completed_operations": 2,
+      "data_origin": "synthetic",
+      "failures": {},
+      "holds": {
+        "booking-gamma": "consent is denied or lacks evidence"
+      },
+      "matching_proven": false,
+      "payment_event_count": 5,
+      "plan_sha256": "74ac096afe83f93893316522bac47fe7084e2f704f2d762151321ba54bd80f94",
+      "planned_operations": 2,
+      "platform": "durable local fake API; no external request",
+      "reported_attribution_proven": false,
+      "source_net_service_cash_cents": 154500,
+      "source_service_value_cents": 154500,
+      "status": "complete"
+    },
+    {
+      "accepted_conversion_value_cents": 152500,
+      "booking_count": 4,
+      "completed_operations": 1,
+      "data_origin": "synthetic",
+      "failures": {},
+      "holds": {
+        "booking-alpha": "refund requires an explicit attribution adjustment decision",
+        "booking-gamma": "consent is denied or lacks evidence"
+      },
+      "matching_proven": false,
+      "payment_event_count": 7,
+      "plan_sha256": "8d81cdee7f53202a483497289d70d55aed9173b9f93faab55b57c71591210fdb",
+      "planned_operations": 1,
+      "platform": "durable local fake API; no external request",
+      "reported_attribution_proven": false,
+      "source_net_service_cash_cents": 162500,
+      "source_service_value_cents": 172500,
+      "status": "complete"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "revenue-reconciliation-pipeline"
+version = "1.0.0"
+description = "Cumulative payment intake, booking-grain revenue and resumable conversion delivery on synthetic data."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [{name = "Amir Ebrahim"}]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest==8.4.2"]
+
+[project.scripts]
+revenue-pipeline = "revenue_reconciliation.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+revenue_reconciliation = ["fixtures/*.csv", "fixtures/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

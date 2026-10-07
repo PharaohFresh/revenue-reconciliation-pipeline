@@ -1,0 +1,3 @@
+payment_id,booking_id,customer_id,kind,occurred_at,service_amount_cents
+payment-a1,booking-alpha,customer-one,retainer,2026-09-01T09:15:00-05:00,25000
+payment-b1,booking-beta,customer-two,retainer,2026-09-02T18:40:00-05:00,30000
