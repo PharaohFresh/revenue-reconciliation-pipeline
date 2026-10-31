@@ -130,7 +130,7 @@ def plan_export(export: Path, metadata_path: Path, ledger: dict) -> dict:
     if set(previous) - set(events):
         raise ReconciliationError("Cumulative export omitted previously recorded payment IDs.")
     if any(events[key] != value for key, value in previous.items()):
-        raise ReconciliationError("A recorded payment changed; reconcile source history explicitly.")
+        raise ReconciliationError("A recorded payment changed; no command corrects source history, so planning stops.")
     bookings = booking_summary(events)
     actions, holds = [], {}
     evidence_by_booking = metadata.get("bookings", {})

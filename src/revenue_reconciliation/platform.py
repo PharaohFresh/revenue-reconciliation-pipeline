@@ -51,7 +51,7 @@ class FakePlatform:
             raise TransientFailure("Synthetic temporary platform failure.")
         existing = state["records"].get(action["booking_id"])
         if action["type"] == "create" and existing:
-            raise PermanentFailure("Booking already exists; reconcile rather than overwrite it.")
+            raise PermanentFailure("Booking already exists; a create never overwrites it.")
         if action["type"] == "restate" and not existing:
             raise PermanentFailure("Cannot restate a missing booking.")
         record = {"booking_id": action["booking_id"], "customer_id": action["customer_id"],
