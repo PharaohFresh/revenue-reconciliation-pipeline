@@ -87,24 +87,28 @@ def booking_summary(events: dict) -> dict:
     return result
 
 
+def nonblank_text(value) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
 def validate_metadata(metadata: dict) -> dict:
     if not isinstance(metadata, dict) or not isinstance(metadata.get("bookings", {}), dict):
         raise ReconciliationError("Metadata must contain a booking evidence mapping.")
     as_of = timestamp(metadata.get("export_as_of", ""))
     for booking, evidence in metadata.get("bookings", {}).items():
-        if not booking or not isinstance(evidence, dict) or not evidence.get("customer_id"):
+        if not booking or not isinstance(evidence, dict) or not nonblank_text(evidence.get("customer_id")):
             raise ReconciliationError("Malformed booking identity evidence.")
         consent = evidence.get("consent", "unknown")
         if consent not in {"granted", "denied", "unknown"}:
             raise ReconciliationError("Unsupported consent state.")
-        if consent != "unknown" and not evidence.get("consent_source"):
+        if consent != "unknown" and not nonblank_text(evidence.get("consent_source")):
             raise ReconciliationError("A claimed consent state requires a source reference.")
         clicks = evidence.get("click_candidates", [])
-        if not isinstance(clicks, list) or any(not isinstance(x, str) or not x for x in clicks):
+        if not isinstance(clicks, list) or any(not nonblank_text(x) for x in clicks):
             raise ReconciliationError("Malformed synthetic click candidate list.")
         if len(set(clicks)) != len(clicks):
             raise ReconciliationError("Repeated click candidates are not independent evidence.")
-        if clicks and not evidence.get("click_source"):
+        if clicks and not nonblank_text(evidence.get("click_source")):
             raise ReconciliationError("Click candidates require a source reference.")
     return {**metadata, "export_as_of": as_of}
 
@@ -113,7 +117,8 @@ def plan_export(export: Path, metadata_path: Path, ledger: dict) -> dict:
     if ledger.get("version") != 1:
         raise ReconciliationError("Unsupported ledger version.")
     if ledger.get("active") and ledger["active"]["status"] != "complete":
-        raise ReconciliationError("Finish or reconcile the active partial plan before a new export.")
+        raise ReconciliationError("Resume the active partial plan with apply before a new export. "
+                                  "No command closes out a plan that cannot complete; that needs a separate manual decision.")
     events = read_export(export)
     metadata = validate_metadata(json.loads(metadata_path.read_text(encoding="utf-8")))
     as_of = metadata["export_as_of"]

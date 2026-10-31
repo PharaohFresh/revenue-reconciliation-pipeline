@@ -15,7 +15,7 @@ The cumulative CSV has exactly six columns:
 
 Payment history is not replaced by a smaller export. Missing prior IDs and changed prior records fail. Equivalent timezone representations of the same supported instant normalize consistently. More than six fractional timestamp digits and fractional offset seconds are rejected, so precision loss cannot hide a historical change. Fractional cents are not rounded silently. Empty exports do not mean the business earned zero.
 
-The metadata sidecar supplies `export_as_of` and a `bookings` mapping. The watermark cannot regress and cannot precede any included payment. Each booking evidence record names the source customer, consent state/source, optional synthetic click candidates and their source. Evidence conflicting with payment identity fails.
+The metadata sidecar supplies `export_as_of` and a `bookings` mapping. The watermark cannot regress and cannot precede any included payment. Each booking evidence record names the source customer, consent state/source, optional synthetic click candidates and their source. The customer ID and each click candidate must be nonblank strings. So must the consent source when a consent state is claimed, and the click source when click candidates are present. Whitespace, objects and numbers are rejected. Evidence conflicting with payment identity fails.
 
 ## Measures
 

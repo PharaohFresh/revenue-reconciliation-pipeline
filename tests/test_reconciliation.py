@@ -171,6 +171,34 @@ def test_claimed_consent_requires_source_and_identity_match(tmp_path):
     with pytest.raises(ReconciliationError):plan_export(export,md,empty_ledger())
 
 
+REFERENCE_FIELDS = [
+    ("customer_id", "identity evidence"),
+    ("consent_source", "consent state requires a source"),
+    ("click_source", "Click candidates require a source"),
+]
+
+
+@pytest.mark.parametrize("bad", ["   ", {"not": "a string"}, 1])
+@pytest.mark.parametrize("field,message", REFERENCE_FIELDS)
+def test_identity_and_source_references_must_be_nonblank_strings(tmp_path, field, message, bad):
+    metadata = json.loads(inputs("01_deposits")[1].read_text())
+    metadata["bookings"]["booking-alpha"].update(click_candidates=["fake-click-a"], click_source="synthetic-event")
+    export, md = altered_inputs(tmp_path, metadata=metadata)
+    plan_export(export, md, empty_ledger())
+    metadata["bookings"]["booking-alpha"][field] = bad
+    export, md = altered_inputs(tmp_path, metadata=metadata)
+    with pytest.raises(ReconciliationError, match=message):
+        plan_export(export, md, empty_ledger())
+
+
+def test_blank_click_candidate_is_rejected(tmp_path):
+    metadata = json.loads(inputs("01_deposits")[1].read_text())
+    metadata["bookings"]["booking-alpha"].update(click_candidates=["   "], click_source="synthetic-event")
+    export, md = altered_inputs(tmp_path, metadata=metadata)
+    with pytest.raises(ReconciliationError, match="click candidate list"):
+        plan_export(export, md, empty_ledger())
+
+
 def test_ambiguous_and_cross_booking_clicks_are_held(tmp_path):
     metadata=json.loads(inputs("01_deposits")[1].read_text())
     metadata["bookings"]["booking-alpha"].update(click_candidates=["fake-click-a","fake-click-b"],click_source="synthetic-event")
