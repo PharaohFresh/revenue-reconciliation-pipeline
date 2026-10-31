@@ -74,7 +74,7 @@ def execute(plan, approval, export: Path, metadata: Path, root: Path, *, faults=
             # idempotency record and its value/time/identity read back correctly.
             pending = pending_by_booking.get(booking_id)
             if not pending or pending["operation_id"] not in platform.state()["idempotency"]:
-                raise ReconciliationError("Previously accepted platform state drifted; reconcile before more delivery.")
+                raise ReconciliationError("Previously accepted platform state drifted; no command resolves this, so delivery stays blocked.")
             verified_record(platform, pending)
     atomic_json(root / "ledger.json", expected_state(plan, completed))
     failures = {}
