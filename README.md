@@ -1,6 +1,6 @@
 # Revenue Reconciliation Pipeline
 
-A runnable payment-to-booking pipeline that keeps revenue, delivery acceptance and attribution separate. It reconciles successive cumulative exports, groups installments into stable bookings, preserves the original conversion time and resumes partial delivery without duplicating successful requests.
+A reference pipeline that turns deposits, balance payments and refunds into consistent booking-level records. It preserves identity across exports, resumes partial delivery without duplicate operations, and keeps cash received separate from conversion values accepted by a simulated API. All records are synthetic.
 
 **Author:** [Amir Ebrahim](https://www.linkedin.com/in/amirebrahim/) · Senior Analytics Engineer
 
@@ -12,17 +12,27 @@ All identities, payments, consent references and click identifiers are invented.
 
 | Reader | Useful starting point |
 |---|---|
-| Recruiter or hiring manager | [Generated demo report](examples/demo-report.json) and the three-export scenario below |
+| Recruiter or hiring manager | The [three quantities and export timeline](#the-three-export-scenario) below; the [generated demo report](examples/demo-report.json) is their raw evidence |
 | Analytics engineer | [Booking and payment contracts](docs/data-contracts.md), [planning logic](src/revenue_reconciliation/model.py), and exact cent-based totals |
 | Data/platform engineer | [Checkpoint and delivery workflow](src/revenue_reconciliation/workflow.py), [fake API](src/revenue_reconciliation/platform.py), and [failure tests](tests/test_reconciliation.py) |
 
 ## The three-export scenario
 
-| Input | Source changes | Pipeline behavior |
+After the third export, the same four bookings add up to three different totals. Reporting any one of them as "revenue" hides the other two.
+
+| Synthetic final quantity | Amount | Meaning |
 |---|---|---|
-| Deposits | Two payment events, two bookings | Plan two creates. One simulated API rejection leaves a partial result; resume only the pending request. |
-| Later balances | Five cumulative events, three bookings | Restate the first two booking values while retaining their conversion times. Hold the new booking whose consent evidence is unknown. |
-| Refund and returning customer | Seven cumulative events, four bookings | Hold the refund for a separate adjustment decision. The returning customer's new booking receives its own ID and conversion. |
+| Source service value | 172,500 cents ($1,725) | Service payments received across four bookings, before refunds |
+| Net service cash | 162,500 cents ($1,625) | The same payments after the 10,000-cent ($100) refund |
+| Accepted conversion value | 152,500 cents ($1,525) | Value the simulated API accepted for eligible bookings; not attribution or matching |
+
+| Export | Payments → bookings | What the pipeline did | Accepted value after | Still held |
+|---|---|---|---|---|
+| 1. Deposits | 2 → 2 | Planned two creates. A simulated permanent rejection left the batch partial at 1 of 2; the resume sent only the pending create. | 25,000, then 55,000 | None |
+| 2. Later balances | 5 → 3 | Restated the first two bookings and kept their original conversion times. One restatement recovered from a simulated lost response. | 134,500 | One new booking: consent evidence missing |
+| 3. Refund and returning customer | 7 → 4 | Created the returning customer's new booking under its own ID. | 152,500 | The refund (needs an adjustment decision) and the consent hold |
+
+A run reports `complete` once its eligible actions finish, even while refund and consent cases stay held. No run claims a click match or reported attribution.
 
 Every identical export replay produces zero new delivery actions. A simulated response loss after acceptance is recovered with the same operation ID and independent readback. These are executable fixture outcomes, not claims about a live ad platform.
 
