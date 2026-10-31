@@ -21,7 +21,8 @@ def demo(root: Path) -> dict:
         ("02_balances", {"booking-alpha":{"mode":"disconnect_after_accept"}}),
         ("03_refund", {}),
     ]:
-        export=FIXTURES/(name+".csv");metadata=FIXTURES/(name+".json")
+        export=FIXTURES/(name+".csv")
+        metadata=FIXTURES/(name+".json")
         plan=plan_export(export,metadata,read_state(root))
         approval=approve(plan,export,metadata,"synthetic-demo-reviewer")
         report=execute(plan,approval,export,metadata,root,faults=faults)
@@ -40,12 +41,24 @@ def demo(root: Path) -> dict:
 def main(argv=None):
     parser=argparse.ArgumentParser(description="Reconcile cumulative payments and deliver booking-grain updates to a local fake API.")
     subs=parser.add_subparsers(dest="command",required=True)
-    d=subs.add_parser("demo");d.add_argument("--output",type=Path)
-    p=subs.add_parser("plan");p.add_argument("--export",required=True,type=Path);p.add_argument("--metadata",required=True,type=Path);p.add_argument("--state-dir",required=True,type=Path);p.add_argument("--output",required=True,type=Path)
+    d=subs.add_parser("demo")
+    d.add_argument("--output",type=Path)
+    p=subs.add_parser("plan")
+    p.add_argument("--export",required=True,type=Path)
+    p.add_argument("--metadata",required=True,type=Path)
+    p.add_argument("--state-dir",required=True,type=Path)
+    p.add_argument("--output",required=True,type=Path)
     for name in ["approve","apply"]:
-        c=subs.add_parser(name);c.add_argument("--plan",required=True,type=Path);c.add_argument("--export",required=True,type=Path);c.add_argument("--metadata",required=True,type=Path)
-        if name=="approve":c.add_argument("--actor",required=True);c.add_argument("--output",required=True,type=Path)
-        else:c.add_argument("--approval",required=True,type=Path);c.add_argument("--state-dir",required=True,type=Path)
+        c=subs.add_parser(name)
+        c.add_argument("--plan",required=True,type=Path)
+        c.add_argument("--export",required=True,type=Path)
+        c.add_argument("--metadata",required=True,type=Path)
+        if name=="approve":
+            c.add_argument("--actor",required=True)
+            c.add_argument("--output",required=True,type=Path)
+        else:
+            c.add_argument("--approval",required=True,type=Path)
+            c.add_argument("--state-dir",required=True,type=Path)
     args=parser.parse_args(argv)
     try:
         if args.command=="demo":
@@ -56,14 +69,17 @@ def main(argv=None):
             print("[OK] Cumulative exports, partial-failure resume, replay and refund hold reproduced.")
             print("Artifacts: "+str(output))
         elif args.command=="plan":
-            result=plan_export(args.export,args.metadata,read_state(args.state_dir));immutable_json(args.output,result)
+            result=plan_export(args.export,args.metadata,read_state(args.state_dir))
+            immutable_json(args.output,result)
             print("[OK] Plan written; no payment or delivery state changed.")
         elif args.command=="approve":
             immutable_json(args.output,approve(load(args.plan),args.export,args.metadata,args.actor))
             print("[OK] Local approval attestation binds the exact plan and source bytes.")
         else:
             result=execute(load(args.plan),load(args.approval),args.export,args.metadata,args.state_dir)
-            print(json.dumps(result,indent=2));return 0 if result["status"]=="complete" else 1
+            print(json.dumps(result,indent=2))
+            return 0 if result["status"]=="complete" else 1
     except (ReconciliationError,OSError,ValueError,KeyError) as exc:
-        print("[BLOCKED] "+str(exc));return 1
+        print("[BLOCKED] "+str(exc))
+        return 1
     return 0
