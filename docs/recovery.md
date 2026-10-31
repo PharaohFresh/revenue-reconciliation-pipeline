@@ -18,6 +18,8 @@ Immutable before-state/plan/approval files are saved before execution. Current p
 
 A partial plan must complete or be explicitly reconciled before planning a new export. This avoids superseding an uncertain create with a different value. A new source version cannot silently bypass a failed action.
 
+Resuming with `apply` is the only implemented path. No command performs terminal reconciliation: closing out a plan that cannot complete, for example after a permanent rejection, is a separate manual decision outside this reference.
+
 ## Response loss
 
 The fake API stores the operation's effect and acknowledgement under its operation ID before it can inject a response-loss failure. Retry uses the same ID and returns the stored acknowledgement. Readback still verifies value, time, customer and retained click provenance.
